@@ -22,13 +22,22 @@ Promise.coroutine(function* () {
    
     ws.on('message', (msg) => {
       obj= JSON.parse(msg);
+	if(obj.method==="post")
+{
       if(obj.selection===0)
         sum_warmer[obj.section]++;
       if(obj.selection===1)
         sum_colder[obj.section]++;
       if(obj.selection===2)
         sum_plant[obj.section]++;
-      console.log(sum_warmer,sum_colder);
+      console.log(sum_warmer,sum_colder,sum_plant);
+}
+
+	if(obj.method==="get")
+{
+          ws.send(sum_warmer[obj.section]+" "+sum_colder[obj.section]+" "+sum_plant[obj.section]);
+}      
+
     });
   });
 
@@ -46,3 +55,6 @@ webSocketServer.clients.forEach(client => {
         }
       });
 */
+
+
+
