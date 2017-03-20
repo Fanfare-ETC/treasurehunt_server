@@ -1,7 +1,6 @@
 # Playbook Notifier
 
-This is a simple WebSocket server that notifies the Playbook client about
-live events. It works in concert with the Operator Console.
+This is a server branched out of playbook_notifier. It counts the warmer,colder and plant flag down inputs from each section for the treasure hunt event
 
 ## Requirements
 
