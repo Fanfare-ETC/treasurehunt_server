@@ -15,7 +15,15 @@ let sum_colder=new Array(4);
 sum_colder.fill(0);
 let sum_plant=new Array(4);
 sum_plant.fill(0);
+function reset()
+{
+sum_warmer.fill(0);
+sum_colder.fill(0);
+sum_plant.fill(0);
+}
 Promise.coroutine(function* () {
+
+  var nIntervId = setInterval(reset, 2000);
   // Listen on server events.
   webSocketServer.on('connection', (ws) => {
     console.log(`${ws.upgradeReq.connection.remoteAddress} connected`);
