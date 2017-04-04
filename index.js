@@ -5,9 +5,11 @@ const moment = require('moment');
 const express = require('express');
 const WebSocket = require('ws');
 
+  
 const app = express();
 const server = http.createServer(app);
 const webSocketServer = new WebSocket.Server({ server });
+
 let section;
 let sum_warmer=new Array(4);
 sum_warmer.fill(0);
@@ -21,14 +23,22 @@ sum_warmer.fill(0);
 sum_colder.fill(0);
 sum_plant.fill(0);
 }
+const broadcast = function (server, message) {
+  server.clients.forEach(client => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(message);
+    }
+  });
+};
 Promise.coroutine(function* () {
 
-  var nIntervId = setInterval(reset, 2000);
+  
+   var nIntervId = setInterval(reset, 2000);
+  
   // Listen on server events.
   webSocketServer.on('connection', (ws) => {
-    console.log(`${ws.upgradeReq.connection.remoteAddress} connected`);
-   
-    ws.on('message', (msg) => {
+  console.log(`${ws.upgradeReq.connection.remoteAddress} connected`);
+  ws.on('message', (msg) => {
       obj= JSON.parse(msg);
 	if(obj.method==="post")
 {
@@ -44,7 +54,22 @@ Promise.coroutine(function* () {
 	if(obj.method==="get")
 {
           ws.send(sum_warmer[obj.section]+" "+sum_colder[obj.section]+" "+sum_plant[obj.section]);
-}      
+}    
+if(obj.method==="start")
+{
+  console.log("Received start signal");
+   broadcast(webSocketServer,"start");
+}  
+if(obj.method==="stop")
+{
+  console.log("Received stop signal");
+   broadcast(webSocketServer,"stop");
+} 
+if(obj.method==="winner")
+{
+  console.log("Received winner "+obj.name);
+  broadcast(webSocketServer,JSON.stringify(obj));    
+} 
 
     });
   });
@@ -55,14 +80,6 @@ Promise.coroutine(function* () {
   });
 })();
 
-/*
-webSocketServer.clients.forEach(client => {
-        if (client.readyState === WebSocket.OPEN) {
-          console.log(`Received from ${client.upgradeReq.connection.remoteAddress}: ${msg}`)
-          client.send(msg);
-        }
-      });
-*/
 
 
 
