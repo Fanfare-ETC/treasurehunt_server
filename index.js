@@ -33,7 +33,7 @@ const broadcast = function (server, message) {
 Promise.coroutine(function* () {
 
   
-   var nIntervId = setInterval(reset, 2000);
+   //var nIntervId = setInterval(reset, 2000);
   
   // Listen on server events.
   webSocketServer.on('connection', (ws) => {
@@ -43,11 +43,32 @@ Promise.coroutine(function* () {
 	if(obj.method==="post")
 {
       if(obj.selection===0)
+      {
         sum_warmer[obj.section]++;
-      if(obj.selection===1)
+         if(sum_warmer[obj.section]%10 ==0)
+          {
+              broadcast(webSocketServer,"plus10warmer");
+              sum_warmer[obj.section]=0;
+          }
+      }
+      else if(obj.selection===1)
+      {
         sum_colder[obj.section]++;
-      if(obj.selection===2)
+          if(sum_colder[obj.section]%10 ==0)
+          {
+              broadcast(webSocketServer,"plus10colder");
+             sum_colder[obj.section]=0;
+          }
+      }
+      else if(obj.selection===2)
+      {
         sum_plant[obj.section]++;
+         if(sum_plant[obj.section]%10 ==0)
+          {
+              broadcast(webSocketServer,"plus10plant");
+              sum_plant[obj.section]=0;
+          }
+      }
       console.log(sum_warmer,sum_colder,sum_plant);
 }
 
