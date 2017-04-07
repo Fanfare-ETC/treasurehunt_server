@@ -17,11 +17,19 @@ let sum_colder=new Array(4);
 sum_colder.fill(0);
 let sum_plant=new Array(4);
 sum_plant.fill(0);
+
+let w_sum_warmer=new Array(4);
+w_sum_warmer.fill(0);
+let w_sum_colder=new Array(4);
+w_sum_colder.fill(0);
+let w_sum_plant=new Array(4);
+w_sum_plant.fill(0);
+
 function reset()
 {
-sum_warmer.fill(0);
-sum_colder.fill(0);
-sum_plant.fill(0);
+w_sum_warmer.fill(0);
+w_sum_colder.fill(0);
+w_sum_plant.fill(0);
 }
 const broadcast = function (server, message) {
   server.clients.forEach(client => {
@@ -33,7 +41,7 @@ const broadcast = function (server, message) {
 Promise.coroutine(function* () {
 
   
-   //var nIntervId = setInterval(reset, 2000);
+   var nIntervId = setInterval(reset, 1000);
   
   // Listen on server events.
   webSocketServer.on('connection', (ws) => {
@@ -45,6 +53,7 @@ Promise.coroutine(function* () {
       if(obj.selection===0)
       {
         sum_warmer[obj.section]++;
+        w_sum_warmer[obj.section]++;
          if(sum_warmer[obj.section]%10 ==0)
           {
               broadcast(webSocketServer,"plus10warmer");
@@ -54,6 +63,7 @@ Promise.coroutine(function* () {
       else if(obj.selection===1)
       {
         sum_colder[obj.section]++;
+        w_sum_colder[obj.section]++;
           if(sum_colder[obj.section]%10 ==0)
           {
               broadcast(webSocketServer,"plus10colder");
@@ -63,18 +73,20 @@ Promise.coroutine(function* () {
       else if(obj.selection===2)
       {
         sum_plant[obj.section]++;
+        w_sum_plant[obj.section]++;
          if(sum_plant[obj.section]%10 ==0)
           {
               broadcast(webSocketServer,"plus10plant");
               sum_plant[obj.section]=0;
           }
       }
-      console.log(sum_warmer,sum_colder,sum_plant);
+      console.log("Server side aggregate" + sum_warmer,sum_colder,sum_plant);
+      console.log("Wanderer side aggregate" + w_sum_warmer,w_sum_colder,w_sum_plant);
 }
 
-	if(obj.method==="get")
+	if(obj.method==="getfromWanderer")
 {
-          ws.send(sum_warmer[obj.section]+" "+sum_colder[obj.section]+" "+sum_plant[obj.section]);
+          ws.send(w_sum_warmer[obj.section]+" "+w_sum_colder[obj.section]+" "+w_sum_plant[obj.section]);
 }    
 if(obj.method==="start")
 {
