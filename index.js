@@ -41,7 +41,7 @@ const broadcast = function (server, message) {
 Promise.coroutine(function* () {
 
   
-   var nIntervId = setInterval(reset, 1000);
+   var nIntervId = setInterval(reset, 3000);
   
   // Listen on server events.
   webSocketServer.on('connection', (ws) => {
@@ -80,11 +80,11 @@ Promise.coroutine(function* () {
               sum_plant[obj.section]=0;
           }
       }
-      console.log("Server side aggregate" + sum_warmer,sum_colder,sum_plant);
-      console.log("Wanderer side aggregate" + w_sum_warmer,w_sum_colder,w_sum_plant);
+      console.log("Server side aggregate", sum_warmer,sum_colder,sum_plant);
+      console.log("Wanderer side aggregate", w_sum_warmer,w_sum_colder,w_sum_plant);
 }
 
-	if(obj.method==="getfromWanderer")
+	if(obj.method==="getFromWanderer")
 {
           ws.send(w_sum_warmer[obj.section]+" "+w_sum_colder[obj.section]+" "+w_sum_plant[obj.section]);
 }    
