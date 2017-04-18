@@ -121,6 +121,25 @@ if(obj.method==="flag3correct")
    console.log("Received flag3correct signal");
    broadcast(webSocketServer,"flag3correct");
   }//send flag3correct signal  
+if(obj.method==="flag1wrong")
+  {
+   console.log("Received flag1wrong signal");
+   broadcast(webSocketServer,"flag1wrong");
+  }//send flag1correct signal  
+    
+if(obj.method==="flag2wrong")
+  {
+   console.log("Received flag2wrong signal");
+   broadcast(webSocketServer,"flag2wrong");
+  
+  }//send flag2correct signal  
+    
+if(obj.method==="flag3wrong")
+  {
+   console.log("Received flag3wrong signal");
+   broadcast(webSocketServer,"flag3wrong");
+  }//send flag3correct signal  
+    
     
 
     });
