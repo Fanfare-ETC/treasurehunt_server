@@ -27,6 +27,7 @@ w_sum_plant.fill(0);
 
 function reset()
 {
+broadcast(webSocketServer,w_sum_warmer+","+w_sum_plant+","+w_sum_colder);
 w_sum_warmer.fill(0);
 w_sum_colder.fill(0);
 w_sum_plant.fill(0);
@@ -41,7 +42,7 @@ const broadcast = function (server, message) {
 Promise.coroutine(function* () {
 
   
-   var nIntervId = setInterval(reset, 3000);
+   var nIntervId = setInterval(reset, 2000);
   
   // Listen on server events.
   webSocketServer.on('connection', (ws) => {
@@ -49,7 +50,7 @@ Promise.coroutine(function* () {
   ws.on('message', (msg) => {
       obj= JSON.parse(msg);
 	if(obj.method==="post")
-{
+  {
       if(obj.selection===0)
       {
         sum_warmer[obj.section]++;
@@ -80,29 +81,47 @@ Promise.coroutine(function* () {
               sum_plant[obj.section]=0;
           }
       }
-      console.log("Server side aggregate", sum_warmer,sum_colder,sum_plant);
-      console.log("Wanderer side aggregate", w_sum_warmer,w_sum_colder,w_sum_plant);
-}
+      console.log("Server side aggregate", sum_warmer,sum_plant,sum_colder);
+      console.log("Wanderer side aggregate", w_sum_warmer,w_sum_plant,w_sum_colder);
+  } //post
 
 	if(obj.method==="getFromWanderer")
-{
-          ws.send(w_sum_warmer[obj.section]+" "+w_sum_colder[obj.section]+" "+w_sum_plant[obj.section]);
-}    
+  {
+   ws.send(w_sum_warmer[obj.section]+" "+w_sum_colder[obj.section]+" "+w_sum_plant[obj.section]);
+  }//send aggregate to wanderer    
 if(obj.method==="start")
-{
-  console.log("Received start signal");
+  {
+   console.log("Received start signal");
    broadcast(webSocketServer,"start");
-}  
+  }//send start signal  
 if(obj.method==="stop")
-{
-  console.log("Received stop signal");
+  {
+   console.log("Received stop signal");
    broadcast(webSocketServer,"stop");
-} 
+  } //send stop signal
 if(obj.method==="winner")
-{
+  {
   console.log("Received winner "+obj.name);
   broadcast(webSocketServer,JSON.stringify(obj));    
-} 
+  } 
+if(obj.method==="flag1correct")
+  {
+   console.log("Received flag1correct signal");
+   broadcast(webSocketServer,"flag1correct");
+  }//send flag1correct signal  
+    
+if(obj.method==="flag2correct")
+  {
+   console.log("Received flag2correct signal");
+   broadcast(webSocketServer,"flag2correct");
+  }//send flag2correct signal  
+    
+if(obj.method==="flag3correct")
+  {
+   console.log("Received flag3correct signal");
+   broadcast(webSocketServer,"flag3correct");
+  }//send flag3correct signal  
+    
 
     });
   });
