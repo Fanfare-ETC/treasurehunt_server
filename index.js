@@ -49,8 +49,8 @@ const broadcast = function (server, message) {
 };
 Promise.coroutine(function* () {
 
-        var nIntervId0 = setInterval(resetAggregate, 2000);
-	    var nIntervId1 = setInterval(resetState, 500000000);
+        var nIntervId0 = setInterval(resetAggregate, 1000);
+	    //var nIntervId1 = setInterval(resetState, 5000000);
 
         // Listen on server events.
         webSocketServer.on('connection', (ws) => {
