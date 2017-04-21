@@ -27,7 +27,7 @@ event:'state',
 };
 function resetAggregate()
 {
-    broadcast(webSocketServer,w_sum_warmer+","+w_sum_marker+","+w_sum_colder);
+    broadcast(webSocketServer,"wanderer"+","+w_sum_warmer+","+w_sum_marker+","+w_sum_colder);
     w_sum_warmer=0;
     w_sum_colder=0;
     w_sum_marker=0;
@@ -96,12 +96,6 @@ Promise.coroutine(function* () {
                         console.log("Server side aggregate", sum_warmer,sum_marker,sum_colder);
                         console.log("Wanderer side aggregate", w_sum_warmer,w_sum_marker,w_sum_colder);
                         } //post
-
-                        if(obj.method==="getFromWanderer")
-                        {
-                            ws.send(w_sum_warmer+" "+w_sum_colder+" "+w_sum_marker);
-                        }//send aggregate to wanderer   
-					
 					    if(obj.method==="getstate")
                         {
 							console.log("Client asking for state");
