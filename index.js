@@ -126,7 +126,17 @@ Promise.coroutine(function* () {
 							console.log(state);
                             broadcast(webSocketServer,JSON.stringify(state));
                         } //send stop signal
-
+						if(obj.method==="reset")
+                        {
+							console.log("Received reset signal");
+                            state.game_on=false;
+							state.flag1=false;
+							state.flag2=false;
+							state.flag3=false;
+							state.game_off=false;
+							console.log(state);
+                            broadcast(webSocketServer,JSON.stringify(state));
+                        } //send stop signal
                         if(obj.method==="flag1correct")
                         {
 							console.log("Received flag1correct signal");
