@@ -17,14 +17,17 @@ let sum_marker=0;
 let w_sum_warmer=0;
 let w_sum_colder=0;
 let w_sum_marker=0;
+
 let state = {
-event:'state',
+    event:'state',
     game_on:false,
     flag1:false,
     flag2:false,
     flag3:false,
-    game_off:false
+    game_off:false,
+    current_time:90
 };
+
 function resetAggregate()
 {
     broadcast(webSocketServer,"wanderer"+","+w_sum_warmer+","+w_sum_marker+","+w_sum_colder);
@@ -32,6 +35,7 @@ function resetAggregate()
     w_sum_colder=0;
     w_sum_marker=0;
 }
+
 function resetState()
 {
     state.game_on=false;
@@ -39,7 +43,9 @@ function resetState()
     state.flag2=false;
     state.flag3=false;
     state.game_off=false;
+    state.current_time=0;
 }
+
 const broadcast = function (server, message) {
     server.clients.forEach(client => {
             if (client.readyState === WebSocket.OPEN) {
@@ -47,12 +53,20 @@ const broadcast = function (server, message) {
             	}
             });
 };
+function decreaseTime()
+{
+   if(state.current_time >0)
+    state.current_time--;
+    console.log("Server time: ",state.current_time);
+}
+var timerIntervalId;
+
 Promise.coroutine(function* () {
 
-        var nIntervId0 = setInterval(resetAggregate, 1000);
-
-        // Listen on server events.
-        webSocketServer.on('connection', (ws) => {
+                var nIntervId0 = setInterval(resetAggregate, 1000);
+               
+                // Listen on server events.
+                webSocketServer.on('connection', (ws) => {
 
                 console.log(`${ws.upgradeReq.connection.remoteAddress} connected`);
 
@@ -95,117 +109,125 @@ Promise.coroutine(function* () {
                         console.log("Server side aggregate", sum_warmer,sum_marker,sum_colder);
                         console.log("Wanderer side aggregate", w_sum_warmer,w_sum_marker,w_sum_colder);
                         } //post
-			if(obj.method==="getstate")
+			            if(obj.method==="getstate")
                         {
-							console.log("Client asking for state");
-							console.log(state);
-                                                        ws.send(JSON.stringify(state));
-							//broadcast(webSocketServer,JSON.stringify(state));
+				            console.log("Client asking for state");
+				            console.log(state);
+                            ws.send(JSON.stringify(state));
+				            //broadcast(webSocketServer,JSON.stringify(state));
                         }//send aggregate to wanderer
 					
                         if(obj.method==="start")
                         {
-                                                        console.log("Received start signal");
-                                                        state.game_on=true;
-							state.flag1=false;
-							state.flag2=false;
-							state.flag3=false;
-							state.game_off=false;
-							console.log(state);
-                                                        broadcast(webSocketServer,JSON.stringify(state));
+                            state.current_time=90;
+                            console.log("Start Time :",state.current_time);
+                            timerIntervalId = setInterval(decreaseTime, 1000);
+
+                            console.log("Received start signal");
+                            state.game_on=true;
+			                state.flag1=false;
+				            state.flag2=false;
+			                state.flag3=false;
+				            state.game_off=false;
+				            console.log(state);
+                            broadcast(webSocketServer,JSON.stringify(state));
                         }//send start signal  
                         if(obj.method==="stop")
                         {
-							console.log("Received stop signal");
-                                                        state.game_on=false;
-							state.flag1=false;
-							state.flag2=false;
-							state.flag3=false;
-							state.game_off=true;
-							console.log(state);
-                                                        broadcast(webSocketServer,JSON.stringify(state));
+				            console.log("Received stop signal");
+                            state.game_on=false;
+				            state.flag1=false;
+				            state.flag2=false;
+				            state.flag3=false;
+				            state.game_off=true;
+				            state.current_time=90;
+				            clearInterval(timerIntervalId);
+				            console.log(state);
+                            broadcast(webSocketServer,JSON.stringify(state));
                         } //send stop signal
 						if(obj.method==="reset")
                         {
 							console.log("Received reset signal");
-                                                        state.game_on=false;
+                            state.game_on=false;
 							state.flag1=false;
 							state.flag2=false;
 							state.flag3=false;
 							state.game_off=false;
+							state.current_time=90;
+							clearInterval(timerIntervalId);
 							console.log(state);
-                                                        broadcast(webSocketServer,JSON.stringify(state));
+                            broadcast(webSocketServer,JSON.stringify(state));
                         } //send stop signal
                         if(obj.method==="flag1correct")
                         {
 							console.log("Received flag1correct signal");
-                                                        state.game_on=true;
+                            state.game_on=true;
 							state.flag1=true;
 							state.flag2=false;
 							state.flag3=false;
 							state.game_off=false;
 							console.log(state);
-                                                        broadcast(webSocketServer,JSON.stringify(state));
+                            broadcast(webSocketServer,JSON.stringify(state));
                         }//send flag1correct signal  
 
                         if(obj.method==="flag1wrong")
                         {
 							console.log("Received flag1wrong signal");
-                                                        state.game_on=true;
+                            state.game_on=true;
 							state.flag1=false;
 							state.flag2=false;
 							state.flag3=false;
 							state.game_off=false;
 							console.log(state);
-                                                        broadcast(webSocketServer,JSON.stringify(state));
+                            broadcast(webSocketServer,JSON.stringify(state));
                         }//send flag1wrong signal  
 
                         if(obj.method==="flag2correct")
                         {
 							console.log("Received flag2correct signal");
-                                                        state.game_on=true;
+                            state.game_on=true;
 							state.flag1=true;
 							state.flag2=true;
 							state.flag3=false;
 							state.game_off=false;
 							console.log(state);
-                                                        broadcast(webSocketServer,JSON.stringify(state));
+                            broadcast(webSocketServer,JSON.stringify(state));
                         }//send flag2correct signal  
 
                         if(obj.method==="flag2wrong")
                         {
 							console.log("Received flag2wrong signal");
-                                                        state.game_on=true;
+                            state.game_on=true;
 							state.flag1=true;
 							state.flag2=false;
 							state.flag3=false;
 							state.game_off=false;
 							console.log(state);
-                                                        broadcast(webSocketServer,JSON.stringify(state));
+                            broadcast(webSocketServer,JSON.stringify(state));
 
                         }//send flag2correct signal  
                         if(obj.method==="flag3correct")
                         {
 							console.log("Received flag3correct signal");
-                                                        state.game_on=true;
+                            state.game_on=true;
 							state.flag1=true;
 							state.flag2=true;
 							state.flag3=true;
 							state.game_off=false;
 							console.log(state);
-                                                        broadcast(webSocketServer,JSON.stringify(state));
+                            broadcast(webSocketServer,JSON.stringify(state));
                         }//send flag3correct signal  
 
                         if(obj.method==="flag3wrong")
                         {
 							console.log("Received flag3wrong signal");
-                                                        state.game_on=true;
+                            state.game_on=true;
 							state.flag1=true;
 							state.flag2=true;
 							state.flag3=false;
 							state.game_off=false;
 							console.log(state);
-                                                        broadcast(webSocketServer,JSON.stringify(state));
+                            broadcast(webSocketServer,JSON.stringify(state));
                         }//send flag3correct signal  
 
                 });
