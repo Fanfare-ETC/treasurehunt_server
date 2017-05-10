@@ -153,7 +153,7 @@ Promise.coroutine(function* () {
 							state.flag2=false;
 							state.flag3=false;
 							state.game_off=false;
-							state.current_time=90;
+							state.current_time=0;
 							clearInterval(timerIntervalId);
 							console.log(state);
                             broadcast(webSocketServer,JSON.stringify(state));
