@@ -142,6 +142,7 @@ Promise.coroutine(function* () {
 				            state.game_off=true;
 				            state.current_time=90;
 				            clearInterval(timerIntervalId);
+				            //if(timerIntervalId!=null)timerIntervalId=null;
 				            console.log(state);
                             broadcast(webSocketServer,JSON.stringify(state));
                         } //send stop signal
@@ -153,8 +154,9 @@ Promise.coroutine(function* () {
 							state.flag2=false;
 							state.flag3=false;
 							state.game_off=false;
-							state.current_time=0;
+							state.current_time=90;
 							clearInterval(timerIntervalId);
+							//if(timerIntervalId!=null)timerIntervalId=null;
 							console.log(state);
                             broadcast(webSocketServer,JSON.stringify(state));
                         } //send stop signal
