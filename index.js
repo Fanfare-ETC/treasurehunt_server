@@ -119,6 +119,11 @@ Promise.coroutine(function* () {
 					
                         if(obj.method==="start")
                         {
+                            if (state.game_on === true) {
+                                console.log("Ignoring start request because server is already started");
+                                return;
+                            }
+                            
                             state.current_time=90;
                             console.log("Start Time :",state.current_time);
                             timerIntervalId = setInterval(decreaseTime, 1000);
